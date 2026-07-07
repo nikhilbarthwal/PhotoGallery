@@ -1,0 +1,548 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Coding Interview - www.tech-interviews.io</title>
+	<meta charset="utf-8"/>
+	<meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
+	<link href="css/main.css" rel="stylesheet"/>
+</head>
+<body class="is-preload">
+<div id="wrapper"><!-- Wrapper -->
+	<div id="main"><!-- Main -->
+		<div class="inner">
+
+			<!-- Header -->
+			<header id="header"><a class="logo" href="index.html"><strong>www.tech-interviews.io</strong></a></header>
+
+			<!-- Content -->
+			<section>
+				<header class="major"><h2>Coding Interview</h2></header>
+
+				<p>In this section, we will see how to crack a coding interview. Specifically, we look at a general template
+				that can be used to solve any coding problem. Note that not all steps of the template are essential to every
+				problem, so the template needs to be customized for each problem. The general steps are:</p>
+				<ol>
+					<li><p><b>Repeat the problem:</b> This is done to make sure that you heard the problem correctly. Sometimes
+					the candidate hears the problem wrong and ends up correctly solving a different problem than what was
+					asked for. This step eliminates this problem.</p></li>
+					<li><p><b>Understand the problem:</b> The interviewer almost always gives you an ambiguous problem and wants
+					you to figure out the missing information. Rushing to solve a problem that is not well understood or is even
+					incomplete is the most common reason why candidates fail in interview. Ask a lot of questions to collect
+					all the missing information and come up with a precise definition of the problem. Pay special attention to
+					the following:</p>
+					<ul>
+						<li>What is the Input to the problem?  What constitutes valid input and what is invalid input? (Never
+						assume that the input given to you is correct, unless specifically told)</li>
+						<li>What is the desired output for valid input?</li>
+						<li>What kind of errors get generated for invalid input? And how to report those errors to the user?</li>
+						<li>What are the boundary/edge conditions for the problem?</li>
+					</ul></li>
+					<li><p><b>Generalize the problem [BONUS STEP]:</b> A bonus step is to generalize the problem, so that the
+					current problem is a special case of a bigger general problem. For example, if the question is to solve a 3x3
+					tic-tac-toe problem, develop a solution to solve the NxN problem and define the constant N to be 3. Another
+					example is, if the problem is to sort an array of integers, use generics to sort an array of type T.</p></li>
+					<li><p><b>Try alternative solutions:</b> The common mistake candidates make is to start solving a problem with
+					the first solution that comes to their mind (which is often not the most efficient one). Interviewer wants to
+					have a discussion and eventually have an efficient solution. So best is to come up with alternative solutions
+					and discuss the pros &amp; cons of each. You can start with brute force solution and then keep coming up with
+					better &amp; better alternatives. Don&#8217;t try to solve each alternative solution (you won&#8217;t have time
+					for that), just a 1 to 2 line description of pros &amp; cons of each approach. Most common
+					trade-off is either optimize for memory (space) or optimize for speed (time), measured in big-O notation.
+					Essentially you can first try to solve the problem in say O(n<sup>2</sup>) time, then move to O(n log(n)), O(n)
+					and eventually to O(log(n)).</p>
+					<p>Once you have multiple approaches, ask the interviewer which approach he/she prefers. If the interviewer
+					does not have a preference, pick the fastest solution (best in terms of big-O notation).</p>
+					<li><p><b>Algorithms:</b> Once the approach is selected, describe the algorithm in a few simple steps. Don&#8217;t
+					go into details of each step. Pseudo code is not necessary and even plain simple English would be good enough. It
+					will bring clarity to mind and help you to easily implement the solution. It will also let the interviewer follow
+					your implementation.</p>
+					<li><p><b>Implementation:</b> Once the problem has been well formulated and you have developed an algorithm to
+					solve it, you can start the implementation. The following best practices should be followed:</p>
+					<ul>
+						<li>When implementing the function/method, start with writing the signature of the function. This makes
+						clear what the input &amp; output is. Include the error signaling mechanism in the interface if needed: For
+						Java, add the exceptions that the function will throw (you don&#8217;t have to be precise) and for C include
+						some boolean which indicates error. Others (C++ &amp; C#) do not need declaring exceptions in the interface.</li>
+						<li>Liberally define helper data structures structs, classes (Keep the classes very simple) and in case of C/C++,
+						add typedef you would need (e.g. typedef struct node* node_ptr to define nodes for linked list).</li>
+						<li>Follow the Top-down approach by first implementing the main function. If you need helper functions, write
+						the signatures for the helper functions and explain to the interviewer what the helper functions do and continue
+						implementing the main function. Once the main function is implemented, repeat the above steps for helper functions.
+						Follow the breath-first strategy of implementation i.e. implement the main function and then implement all the
+						helper functions used by the main function, and then all the functions used by helper functions. Usually 2 layers
+						of functions are enough and if you exceed that limit, you are probably doing something wrong.</li>
+						<li>Never assume that the input is correct. Always check for illegal inputs and throw exceptions/report errors.
+						For C/C++, additionally generously use &#8220;assert&#8221; clauses.</li>
+						<li>Deal with edge cases first and then continue to solve the main case.</li>
+						<li>Expand each statement of your algorithm (developed in Step-5) into a couple of lines of code. Make sure to
+						leave a blank space between various blocks of code for easy readability (similar to breaking a large text into
+						paragraphs).</li>
+						<li>Practice defensive coding. In every line of code you write, figure out what can go wrong and take care of it.
+						For example, if you are using a pointer, Can this pointer be null? If yes, have you taken that into account in
+						your code?</li>
+					</ul>
+					<p>Once an initial round of implementation is done, look at the code again and identify the opportunities to optimize
+					and let the interview know. Then optimize the code. Sometimes the interviewer may ask you not to do further optimizations
+					in the interest of time and that is ok, just let him verbally know what you would be doing and move on.</p></li>
+					<li><p><b>Dry Run the code:</b> Walk through the code and do a quick check to see if the basic test cases pass and
+					everything looks ok. You don&#8217;t have to execute the code, just glancing at the code should be sufficient and
+					don&#8217;t spend too much time on this code.</p></li>
+					<li><p><b>Discuss Test cases [Optional]:</b> Sometimes the interviewer would want you to come up with various test
+					cases. The trick is to divide your input into categories and take 1 or 2 examples from each category. Make sure to
+					include all boundary/edge cases and also invalid inputs (which should trigger exceptions).</p></li>
+				</ol>
+				<p>There are three cross-cutting aspects that should be applicable to every step:</p><br/><br/>
+				<ul>
+					<li><b>Think aloud:</b> The interviewer does not have the ability to read your mind so make sure to think aloud. He/She
+					then knows what is going on in your head.</li>
+					<li><b>State Assumptions:</b> If you make an assumption, state it explicitly. If you don&#8217;t, the interviewer might think
+					that you have overlooked something, and you can be penalized. And if your assumption is incorrect, the interviewer will
+					immediately point it out to you.</li>
+					<li><b>Ask questions:</b> An interview is a dialog so please keep it that way. They want to know what it is like to work
+					with you on a day to day basis.</li>
+					<li><b>Listen to the interviewer:</b> A good interviewer will generally give you hints if he/she feels you are stuck, so
+					make sure to listen to him/her.  Failing to listen can also be seen as arrogance/inability to take feedback and will go
+					against you. Remember, cultural fit is as important as technical fit.</li>
+				</ul>
+				<p>Now that we have this template, we will use it to solve two problems as an example. We have used C++ for our implementations
+				as an example but frankly, any language can be used.</p>
+
+				<hr class="major"/>
+				<h3>Sample problem 1: <span class='not_bold'>Given a string, convert it into a number.</span></h3>
+				<ol>
+					<li><p><b>Repeat the problem</b> to make sure you heard it correctly.</p></li>
+					<li><p><b>Understand the problem:</b> The question is deceptively simple. Here &#8220;number&#8221; could mean anything:
+					int, float, double, arbitrary precision etc. so the first thing to clarify with the interviewer is that, what kind of
+					number it is. So let&#8217;s say the interviewer says it is an integer. Now we ask more questions like are negative
+					numbers permitted? Can the string have leading/trailing whitespaces etc.? After clarification, here is the input &amp;
+					output for the function:
+					<ul>
+						<li>String can have leading or trailing white spaces</li>
+						<li>String starts with - or + (or no sign) followed by digits 0 to 9. Anything else is invalid input. If the input is
+						invalid, then it should throw exception.</li>
+						<li>Desired output is an &#8220;int&#8221;. int in any language has limits and the input should be within these limits
+						(e.g for 4 bytes for signed, input should be between 2<sup>32</sup>-1 and -2<sup>32</sup>). If it is outside this
+						value, it should throw an overflow exception.</li>
+					</ul>
+					<li><p><b>Generalize the problem:</b> Generalizing the problem is not applicable for this problem.</p></li>
+					<li><p><b>Try alternative solutions:</b> All solutions will be O(n) so not much use trying various approaches.</p></li>
+					<li><p><b>Algorithm:</b> The algorithm is as follows:</p>
+					<ul>
+						<li>Trim all leading &amp; trailing white spaces</li>
+						<li>Check the sign of the string and assign a boolean indicating sign.</li>
+						<li>Remove all leading zeros and store the starting position of digits, after the sign and all leading zeros.</li>
+						<li>Store the limit based on the sign of the number (For 4 byte integer: if sign is positive then 2<sup>32</sup>-1
+						else -2<sup>32</sup>).</li>
+						<li>Initialize the result to 0 &amp; exponent (power of 10) as -1 or 1 (depending on sign).</li>
+						<li>Loop from last digit to first significant digit:
+						<ul>
+							<li>Check that the digit is between 0 and 9, else throw an invalid format exception.</li>
+							<li>Calculate delta = exponent &#215; digit and add it to the result. But before adding, check if it has enough
+							room to add (abs(delta) &lt; abs(limit - result)). If not, throw an overflow exception.</li>
+						</ul></li>
+						<li>Return the result once the loop is over.</li>
+					</ul></li>
+					<li><p><b>Implementation:</b> A C++ implementation for the problem is given below.</p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width: .1em .1em .1em .1em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #008000">// PROBLEM: Given a string, convert it into a number.</span>
+<span style="color: #0000ff">#include &lt;iostream&gt;</span>
+<span style="color: #0000ff">#include &lt;string&gt;</span>
+<span style="color: #0000ff">#include &lt;stdexcept&gt;</span>
+<span style="color: #0000ff">#include &lt;climits&gt;</span>
+<span style="color: #0000ff">#include &lt;cctype&gt;</span>
+<span style="color: #0000ff">#include &lt;cstdlib&gt;</span>
+
+<span style="color: #0000ff">using</span> <span style="color: #0000ff">namespace</span> std;
+
+
+<span style="color: #008000">// Trim string of all leading &amp; trailing white spaces.</span>
+string Trim(<span style="color: #0000ff">const</span> string &amp;str)
+{
+  <span style="color: #2b91af">int</span> i = 0, j = 0;
+  <span style="color: #0000ff">while</span> (isspace(str[i]))
+    i++;
+
+  <span style="color: #0000ff">while</span> (!isspace(str[i + j]))
+    <span style="color: #0000ff">if</span> ((i + j) == str.length() - 1)
+      <span style="color: #0000ff">return</span> str.substr(i);
+    <span style="color: #0000ff">else</span>
+      j++;
+
+  <span style="color: #0000ff">return</span> str.substr(i, j);
+}
+
+
+<span style="color: #008000">// Convert a integer into string.</span>
+<span style="color: #2b91af">int</span> Convert(<span style="color: #0000ff">const</span> string &amp;str)
+{
+  <span style="color: #0000ff">const</span> string s = Trim(str);
+  <span style="color: #0000ff">const</span> <span style="color: #2b91af">int</span> n = s.length();
+
+  <span style="color: #0000ff">if</span> (n == 0)
+    <span style="color: #0000ff">throw</span> runtime_error(<span style="color: #a31515">&quot;Empty string&quot;</span>);
+
+  <span style="color: #008000">// Get the sign of the number.</span>
+  <span style="color: #0000ff">const</span> <span style="color: #2b91af">bool</span> sign = (s[0] != <span style="color: #a31515">&#39;-&#39;</span>);
+
+  <span style="color: #008000">// Set the starting position for digits.</span>
+  <span style="color: #2b91af">int</span> p = ((s[0] == <span style="color: #a31515">&#39;+&#39;</span>) || (s[0] == <span style="color: #a31515">&#39;-&#39;</span>)) ? 1 : 0;
+
+  <span style="color: #0000ff">while</span> (s[p] == <span style="color: #a31515">&#39;0&#39;</span>) <span style="color: #008000">// Trim all leading zeroes and</span>
+    p++;              <span style="color: #008000">// adjust start position.</span>
+
+  <span style="color: #008000">// Set the limit based on sign.</span>
+  <span style="color: #0000ff">const</span> <span style="color: #2b91af">int</span> limit = sign ? INT_MAX : INT_MIN;
+
+  <span style="color: #2b91af">int</span> result = 0;
+  <span style="color: #2b91af">int</span> exp = sign ? 1 : -1;
+  <span style="color: #0000ff">for</span> (<span style="color: #2b91af">int</span> i = n - 1; i &gt;= p; i--)
+  {
+    <span style="color: #008000">// Check if the digits are within bounds.</span>
+    <span style="color: #0000ff">if</span> ((s[i] &lt; <span style="color: #a31515">&#39;0&#39;</span>) || (s[i] &gt; <span style="color: #a31515">&#39;9&#39;</span>))
+      <span style="color: #0000ff">throw</span> runtime_error(<span style="color: #a31515">&quot;Invalid format&quot;</span>);
+
+    <span style="color: #008000">// Check if there is more room to add,</span>
+    <span style="color: #008000">// then add else throw overflow exception.</span>
+    <span style="color: #2b91af">int</span> delta = exp * (s[i] - <span style="color: #a31515">&#39;0&#39;</span>);
+    <span style="color: #2b91af">int</span> diff = limit - result;
+    <span style="color: #0000ff">if</span> (sign ? (diff &gt;= delta) : (diff &lt;= delta))
+      result += delta;
+    <span style="color: #0000ff">else</span>
+      <span style="color: #0000ff">throw</span> overflow_error(<span style="color: #a31515">&quot;Integer overflow&quot;</span>);
+
+    <span style="color: #008000">// If the limit of # of digits have reached and</span>
+    <span style="color: #008000">// there are still more digits left to be processed,</span>
+    <span style="color: #008000">// then throw overflow exception.</span>
+    <span style="color: #2b91af">double</span> ratio = ((<span style="color: #2b91af">double</span>) limit) / exp;
+    <span style="color: #0000ff">if</span> ((ratio &lt; (<span style="color: #2b91af">double</span>) 10) &amp;&amp; (i &gt; p))
+      <span style="color: #0000ff">throw</span> overflow_error(<span style="color: #a31515">&quot;Integer overflow&quot;</span>);
+    <span style="color: #0000ff">else</span>
+      exp *= 10;
+  }
+
+  <span style="color: #0000ff">return</span> result;
+}
+
+
+<span style="color: #008000">// Test the input string by converting it into a number.</span>
+<span style="color: #2b91af">void</span> test(<span style="color: #0000ff">const</span> string&amp; str)
+{
+  cout&lt;&lt;<span style="color: #a31515">&quot;\&quot;&quot;</span>&lt;&lt;str&lt;&lt;<span style="color: #a31515">&quot;\&quot;\t--&gt;\t&quot;</span>;
+  try { cout&lt;&lt;Convert(str)&lt;&lt;endl; }
+  <span style="color: #0000ff">catch</span>(<span style="color: #0000ff">const</span> exception&amp; e)
+  { cout&lt;&lt;<span style="color: #a31515">&quot;EXCEPTION - &quot;</span>&lt;&lt;e.what()&lt;&lt;endl; }
+}
+
+
+<span style="color: #008000">// Main function that runs all the test cases.</span>
+<span style="color: #2b91af">int</span> main(<span style="color: #2b91af">void</span>) {
+  test(<span style="color: #a31515">&quot;+000002147483647&quot;</span>);
+  test(<span style="color: #a31515">&quot;-0000002147483648&quot;</span>);
+  test(<span style="color: #a31515">&quot;-0000002147483649&quot;</span>);
+  test(<span style="color: #a31515">&quot;    02147483648  &quot;</span>);
+  test(<span style="color: #a31515">&quot;0000000000000000&quot;</span>);
+  test(<span style="color: #a31515">&quot; adfasfdgher ewr&quot;</span>);
+  <span style="color: #0000ff">return</span> 0;
+}
+</pre></div></li>
+					<li><p><b>Dry-Run the code:</b> Dry-run the code with some common examples 0, a positive number and a negative number
+					to make sure the code looks ok.</p></li>
+					<li><p><b>Discuss Test cases:</b> Divide the input into categories and come up with test cases for each category:</p>
+					<ul>
+						<li>Test for integer limits: Both max int and min int.</li>
+						<li>Normal cases: one positive number, 1 negative number, and 0.</li>
+						<li>Sign: Test numbers with + sign and - sign.</li>
+						<li>Add multiple leading 0&#8217;s to positive &amp; negative numbers.</li>
+						<li>Add characters and make sure invalid format exception is thrown.</li>
+						<li>Test a positive number greater than max int and a negative number less than min int and make sure integer
+						overflow errors happen.</li>
+					</ul></li>
+				</ol>
+
+				<hr class="major"/>
+				<h3>Sample problem 2: <span class='not_bold'>Given a number and an array of numbers, print all the pairs of numbers in the
+				array whose sum is the given number.</span></h3>
+				<ol>
+					<li><p><b>Repeat the problem</b> to make sure you heard it correctly.</p></li>
+					<li><p><b>Understand the problem:</b> The same concept as above problem that &#8220;number&#8221; could mean anything:
+					int, float, double, arbitrary precision etc. You could clarify what kind of number it is, or you could use generics to
+					write a function that works for any number. Also, if (a,b) is a solution then (b,a) is also a solution, so make sure to
+					ask the interviewer if re-ordered pairs are allowed. Another thing to clarify is that both positive &amp; negative
+					numbers are allowed to which the interviewer would say yes (which does not change the answer anyway). The Border case
+					is that you get an empty array and you would print nothing.</p></li>
+					<li><p><b>Generalize the problem:</b>  Generalize the problem: Instead of writing the function for integers or a
+					particular data type, we can use generics to write the code for any numeric type.</p></li>
+					<li><p><b>Try alternative solutions:</b> The brute force solution would run two loops and find all the pairs. The
+					solution would take O(n<sup>2</sup>) time and O(1) space. However, if we were to store all the numbers in some hashmap
+					in the first pass (order O(n)) and then go about looking for the counterparts if they exist (O(n) time again). Further
+					we can print pairs (a,b) only when a&#8804;b. That way we only print a pair once, as a&#8804;b and b&#8804;a would not
+					be true simultaneously except when a=b, in which case there will be one pair since keys are not duplicated in the hashmap.
+					In the above two alternatives, we observe the classic space-time trade-off. You can optimize for speed at the expense of
+					memory or optimize for memory at the expense of speed.</p></li>
+					<li><p><b>Algorithm:</b> The algorithm is as follows:</p>
+					<ul>
+						<li>Create a hash table and in the first pass, store all the values in the hashmap as keys.</li>
+						<li>In the second pass, for each value x, check if (N - x) is present or not. If present, the if x &lt; N-x, then
+						print it out (where N is the given integer and x is the key).</li>
+					</ul></li>
+					<li><p><b>Implementation:</b> A C++ implementation for the problem is given below.</p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width: .1em .1em .1em .1em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #008000">// PROBLEM: Given a number and an array of numbers,</span>
+<span style="color: #008000">//   print all the pairs of numbers in the array</span>
+<span style="color: #008000">//   whose sum is the given number.</span>
+
+<span style="color: #0000ff">#include &lt;iostream&gt; </span>
+<span style="color: #0000ff">#include &lt;unordered_map&gt; </span>
+<span style="color: #0000ff">#include &lt;list&gt;</span>
+<span style="color: #0000ff">#include &lt;utility&gt;</span>
+
+<span style="color: #0000ff">using</span> <span style="color: #0000ff">namespace</span> std;
+
+<span style="color: #0000ff">typedef</span> <span style="color: #2b91af">int</span> data; <span style="color: #008000">// Can be modified to include any type.</span>
+<span style="color: #0000ff">typedef</span> list&lt;pair&lt;data, data&gt;&gt; pair_list;
+
+
+<span style="color: #008000">// The function to calculate list of pairs from the input.</span>
+pair_list GetPairs(<span style="color: #0000ff">const</span> list&lt;data&gt;&amp; input, <span style="color: #0000ff">const</span> data N)
+{
+  unordered_map&lt;data, <span style="color: #2b91af">bool</span>&gt; map;
+  pair_list result;
+
+  <span style="color: #008000">// All the entries that are represented only once are</span>
+  <span style="color: #008000">// stored with their values being false and for</span>
+  <span style="color: #008000">// others, the value is true.</span>
+  <span style="color: #0000ff">for</span>(<span style="color: #0000ff">auto</span>&amp; x: input)
+    map[x] = (map.find(x) != map.end());
+
+
+  <span style="color: #008000">// If the key is a=b=N/2 and both a &amp; b are present in</span>
+  <span style="color: #008000">// the input or a&lt;&gt;B and both a &amp; b are present, include</span>
+  <span style="color: #008000">// them in the result.</span>
+  <span style="color: #0000ff">for</span>(<span style="color: #0000ff">auto</span>&amp; z: map)
+  {
+    <span style="color: #0000ff">const</span> data a = z.first;
+    <span style="color: #0000ff">const</span> data b = N - z.first;
+
+    <span style="color: #0000ff">if</span> (((a == N/2) &amp;&amp; z.second) ||
+      ((a&lt;N/2) &amp;&amp; (map.find(b) != map.end())))
+        result.push_back(make_pair(a, b));
+  }
+  <span style="color: #0000ff">return</span> result;
+}
+
+
+<span style="color: #008000">// The main program to test the case.</span>
+<span style="color: #2b91af">int</span> main()
+{
+  <span style="color: #0000ff">for</span>(<span style="color: #0000ff">auto</span>&amp; z: GetPairs({-1,-4,6,8,-10,2,0,2}, 4))
+    cout&lt;&lt;<span style="color: #a31515">&quot;(&quot;</span>&lt;&lt;z.first&lt;&lt;<span style="color: #a31515">&quot; , &quot;</span>&lt;&lt;z.second&lt;&lt;<span style="color: #a31515">&quot;)&quot;</span>&lt;&lt;endl;
+  <span style="color: #0000ff">return</span> 0;
+}
+</pre></div></li>
+					<li><p><b>Dry-Run the code:</b> Dry-run the code with some common examples like empty array, array with same numbers,
+					array with multiple numbers but no valid pairs etc.</p></li>
+					<li><p><b>Discuss Test cases:</b> Divide the input into categories and come up with test cases for each category:</p>
+					<ul>
+						<li>Regular case with multiple valid pairs.</li>
+						<li>Array with no valid pairs.</li>
+						<li>Array with same number which is equal to the given number.</li>
+						<li>Array with same number which is not equal to the given number.</li>
+						<li>Empty array.</li>
+					</ul></li>
+				</ol>
+
+				<hr class="major"/>
+				<h3>Sample problem 3: <span class='not_bold'>Given a binary tree, print the data in all the nodes in a breadth first
+				manner.</span></h3>
+				<ol>
+					<li><p><b>Repeat the problem</b> to make sure you heard it correctly.</p></li>
+					<li><p><b>Understand the problem:</b> Clarify the following:
+					<ul>
+						<li>What is the data type for the binary tree? For the scope of this problem, let&#8217;s say it is string.</li>
+						<li>Boundary conditions: If the node is null, we will print nothing.</li>
+						<li>What is the output format? For the scope of this problem, let&#8217;s say we print one entry per line.</li>
+						<li>Explicitly state that you are making an assumption that the tree does not have any cycles.</li>
+					</ul>
+					<li><p><b>Generalize the problem:</b> Clarify the following:
+					<ul>
+						<li>Similar to the above problem we would write the function for any arbitrary data type using generics
+						(typedefs can be used for C/C++).</li>
+						<li>Also, we would solve the problem for a N-ary tree instead of a binary tree. While this modifies the problem
+						statement, it will fetch you bonus points.</li>
+					</ul>
+					<li><p><b>Try alternative solutions:</b> The brute force solution would do a standard (depth first) search and print
+					elements of the tree level by level. The function follows the strategy of iterative deepening until all the levels
+					are printed. This solution takes O(1) space but is very slow since the tree has to be traversed multiple times. The
+					more efficient solution is to use a queue which initially contains the root node. Pull the first node of the queue,
+					print it and push all the children of the node into a queue. Keep doing this until the queue is empty. The solution
+					has a time efficiency of O(n), where n is the number of nodes in the tree. However, it takes upto O(n) space since
+					it has to maintain a queue which can have a maximum length of n.</p>
+					<p>This is another example of the classic space-time trade-off where you can optimize for speed or you can optimize
+					for memory.</p>
+					<li><p><b>Algorithm:</b> The algorithm is as follows:</p>
+					<ul>
+						<li>Take care of the boundary edge case where the tree is empty and return.</li>
+						<li>Create a queue and push the head into queue</li>
+						<li>Loop until queue is empty:
+						<ul>
+							<li>Pop the queue and print the node value. Then push all its children into the queue.</li>
+						</ul></li>
+					</ul></li>
+					<li><p><b>Implementation:</b> A C++ implementation for the problem is given below.</p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width: .1em .1em .1em .1em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #008000">// PROBLEM: Given a n-ary tree,</span>
+<span style="color: #008000">//   return nodes in a breadth first traversal.</span>
+
+<span style="color: #0000ff">#include &lt;iostream&gt;</span>
+<span style="color: #0000ff">#include &lt;list&gt;</span>
+<span style="color: #0000ff">#include &lt;queue&gt;</span>
+
+<span style="color: #0000ff">using</span> <span style="color: #0000ff">namespace</span> std;
+
+
+<span style="color: #008000">// Definition of the tree node using generics.</span>
+<span style="color: #0000ff">template</span>&lt;<span style="color: #0000ff">class</span> <span style="color: #2b91af">T</span>&gt;
+<span style="color: #0000ff">struct</span> node
+{
+  T data;
+  list&lt;<span style="color: #0000ff">struct</span> node*&gt; children;
+
+  node(T x) : data(x) { }
+};
+
+
+<span style="color: #008000">// Get the list of all the nodes (breadth first).</span>
+<span style="color: #0000ff">template</span>&lt;<span style="color: #0000ff">class</span> <span style="color: #2b91af">T</span>&gt;
+list&lt;T&gt; BreadthFirstTraversal(node&lt;T&gt;* head)
+{
+  list&lt;T&gt; result;
+  <span style="color: #0000ff">if</span> (head == NULL)
+    <span style="color: #0000ff">return</span> result;
+
+  queue&lt;node&lt;T&gt;*&gt; q;
+  q.push(head);
+
+  <span style="color: #0000ff">while</span>(!q.empty())
+  {
+    node&lt;T&gt;* n = q.front();
+    q.pop();
+    result.push_back(n-&gt;data);
+    <span style="color: #0000ff">for</span>(<span style="color: #0000ff">auto</span>&amp; child : n-&gt;children)
+      q.push(child);
+  }
+
+  <span style="color: #0000ff">return</span> result;
+}
+
+
+<span style="color: #008000">// Main program that creates a tree, prints it.</span>
+<span style="color: #2b91af">int</span> main()
+{
+  <span style="color: #008000">// Construct the tree.</span>
+  node&lt;string&gt; *n10 = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;childC3&quot;</span>);
+  node&lt;string&gt; *n9  = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;childC2&quot;</span>);
+  node&lt;string&gt; *n8  = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;childC1&quot;</span>);
+  node&lt;string&gt; *n7  = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;childB1&quot;</span>);
+  node&lt;string&gt; *n6  = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;childA2&quot;</span>);
+  node&lt;string&gt; *n5  = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;childA1&quot;</span>);
+  node&lt;string&gt; *n4  = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;childC&quot;</span>);
+  node&lt;string&gt; *n3  = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;childB&quot;</span>);
+  node&lt;string&gt; *n2  = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;childA&quot;</span>);
+  node&lt;string&gt; *n1  = <span style="color: #0000ff">new</span> node&lt;string&gt;(<span style="color: #a31515">&quot;root&quot;</span>);
+
+  n4-&gt;children.push_back(n8);
+  n4-&gt;children.push_back(n9);
+  n4-&gt;children.push_back(n10);
+  n3-&gt;children.push_back(n7);
+  n2-&gt;children.push_back(n5);
+  n2-&gt;children.push_back(n6);
+  n1-&gt;children.push_back(n2);
+  n1-&gt;children.push_back(n3);
+  n1-&gt;children.push_back(n4);
+
+
+  <span style="color: #008000">// Print all the elements in breadth first manner.</span>
+  <span style="color: #0000ff">for</span>(<span style="color: #0000ff">auto</span>&amp; item: BreadthFirstTraversal(n1))
+    cout&lt;&lt;item&lt;&lt;endl;
+
+
+  <span style="color: #008000">// Destruct the tree.</span>
+  <span style="color: #0000ff">delete</span> n1;
+  <span style="color: #0000ff">delete</span> n2;
+  <span style="color: #0000ff">delete</span> n3;
+  <span style="color: #0000ff">delete</span> n4;
+  <span style="color: #0000ff">delete</span> n5;
+  <span style="color: #0000ff">delete</span> n6;
+  <span style="color: #0000ff">delete</span> n7;
+  <span style="color: #0000ff">delete</span> n8;
+  <span style="color: #0000ff">delete</span> n9;
+  <span style="color: #0000ff">delete</span> n10;
+}
+</pre></div></li>
+					<li><p><b>Dry-Run the code:</b> Dry-run the code with boundary condition and a small example with a root
+					and its two children.</p></li>
+					<li><p><b>Discuss Test cases:</b> Divide the input into categories and come up with test cases for each category:</p>
+					<ul>
+						<li>Test boundary conditions of empty tree and having only root node.</li>
+						<li>Take a regular balanced tree as an example.</li>
+						<li>Left skewed tree.</li>
+						<li>Right skewed tree.</li>
+					</ul></li>
+				</ol>
+
+			</section>
+		</div><!-- inner -->
+	</div>
+
+	<!-- Sidebar -->
+	<div id="sidebar">
+		<div class="inner">
+
+			<!-- Menu -->
+			<nav id="menu">
+				<header class="major"><h2>Menu</h2></header>
+				<ul>
+					<li><a href="index.html">Homepage</a></li>
+					<li><a href="about.html">About</a></li>
+					<li><a href="interview.html">Interview process</a></li>
+					<li>
+						<span class="opener">Company Profiles</span>
+						<ul>
+							<li><a href="info_amazon.html">Amazon</a></li>
+							<li><a href="info_apple.html">Apple</a></li>
+							<li><a href="info_google.html">Google</a></li>
+							<li><a href="info_facebook.html">Facebook</a></li>
+							<li><a href="info_microsoft.html">Microsoft</a></li>
+							<li><a href="info_uber.html">Uber</a></li>
+						</ul>
+					</li>
+					<li><a href="coding.html">Coding Interview</a></li>
+					<li><a href="material.html">Study Material</a></li>
+					<li><a href="faq.html">FAQ</a></li>
+				</ul>
+			</nav>
+
+			<!-- Section -->
+			<section>
+				<header class="major"><h2>Get in touch</h2></header>
+				<p>If you have any comments or suggestions, please feel free to email me.
+				Feedback is always welcome!</p>
+				<ul class="contact">
+					<li class="icon solid fa-envelope"><a href="mailto:nikhilbarthwal@hotmail.com">nikhilbarthwal@hotmail.com</a></li>
+				</ul>
+			</section>
+
+			<!-- Footer --><footer id="footer"><p class="copyright">Last update: Sunday, 25<sup>th</sup> October 2020</p></footer>
+		</div><!-- inner -->
+	</div><!-- Main -->
+</div><!-- Wrapper -->
+
+<!-- Scripts -->
+<script src="js/jquery.min.js"></script>
+<script src="js/browser.min.js"></script>
+<script src="js/breakpoints.min.js"></script>
+<script src="js/util.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
