@@ -2,19 +2,23 @@
 """
 generate_gallery.py
 
-Scans multiple folders for images, generates 300x200 thumbnails
-(center-cropped to a 3:2 aspect ratio, clipping top/bottom or left/right
-as needed), and builds a SINGLE HTML page that displays every folder's
-images in its own responsive, centered grid -- with the folder name as
-a heading above each grid. Clicking a thumbnail expands the original
-image in place (lightbox); clicking again returns to the gallery.
+Scans multiple folders for images, copies the originals and generates
+300x200 thumbnails (center-cropped to a 3:2 aspect ratio, clipping
+top/bottom or left/right as needed) into a single OUTPUT folder, and
+builds an index.html page (inside that OUTPUT folder) that displays
+every source folder's images in its own responsive, centered grid --
+with the folder name as a heading above each grid. Clicking a thumbnail
+expands the original image in place (lightbox) with left/right arrows
+to move to the previous/next image (hidden at the start/end of that
+folder's images); clicking again returns to the gallery.
 
->>> Edit the FOLDERS list below to point at the folders you want <<<
+>>> Edit the FOLDERS list and OUTPUT folder name below <<<
 
 Requires: Pillow  (pip install Pillow --break-system-packages)
 """
 
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -31,18 +35,15 @@ except ImportError:
 
 # List of folders to scan. Each folder gets its own heading + grid of
 # thumbnails on the single generated page.
-FOLDERS = [
-    "Prague1/",
-    "Prague2/",
-    "Cyprus/",
-]
+FOLDERS = ["Berlin1/", "Berlin2/", "Berlin3/", "Berlin4/", "Berlin5/"]
 
-# Name of the HTML file that will be generated (written to the current
-# working directory unless you make this an absolute path).
-OUTPUT_FILE = "gallery.html"
+# Folder where everything gets written: the generated HTML file
+# (as index.html), copies of all original images, and their thumbnails.
+# Created automatically if it doesn't already exist.
+OUTPUT = "Homepage/"
 
-# Subfolder name (created inside each of the folders above) where
-# generated thumbnails are stored.
+# Subfolder name (created inside OUTPUT, under each source folder's own
+# subfolder) where generated thumbnails are stored.
 THUMB_DIR_NAME = "thumbnails"
 
 # ---------------------------------------------------------------------------
@@ -250,6 +251,36 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
         opacity: 1;
     }}
 
+    .lightbox-arrow {{
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 3rem;
+        color: #fff;
+        cursor: pointer;
+        user-select: none;
+        opacity: 0.7;
+        padding: 10px 18px;
+        line-height: 1;
+        z-index: 1001;
+    }}
+
+    .lightbox-arrow:hover {{
+        opacity: 1;
+    }}
+
+    .lightbox-arrow.left {{
+        left: 10px;
+    }}
+
+    .lightbox-arrow.right {{
+        right: 10px;
+    }}
+
+    .lightbox-arrow.hidden {{
+        display: none;
+    }}
+
     @keyframes fadeIn {{
         from {{ opacity: 0; }}
         to {{ opacity: 1; }}
@@ -263,15 +294,34 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-    <img id="lightbox-img" src="" alt="">
+    <span class="lightbox-arrow left" id="lightbox-prev" onclick="prevImage(event)">&#10094;</span>
+    <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+    <span class="lightbox-arrow right" id="lightbox-next" onclick="nextImage(event)">&#10095;</span>
 </div>
 
 <script>
-    function openLightbox(src, alt) {{
-        const lb = document.getElementById('lightbox');
+    const GALLERIES = {galleries_json};
+    let curSection = -1;
+    let curIndex = -1;
+
+    function showImage() {{
+        const list = GALLERIES[curSection];
+        const item = list[curIndex];
         const img = document.getElementById('lightbox-img');
-        img.src = src;
-        img.alt = alt;
+        img.src = item.src;
+        img.alt = item.alt;
+
+        const prevBtn = document.getElementById('lightbox-prev');
+        const nextBtn = document.getElementById('lightbox-next');
+        prevBtn.classList.toggle('hidden', curIndex <= 0);
+        nextBtn.classList.toggle('hidden', curIndex >= list.length - 1);
+    }}
+
+    function openLightbox(section, index) {{
+        curSection = section;
+        curIndex = index;
+        const lb = document.getElementById('lightbox');
+        showImage();
         lb.classList.add('open');
         document.body.style.overflow = 'hidden';
     }}
@@ -282,9 +332,32 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
         document.body.style.overflow = '';
     }}
 
+    function prevImage(event) {{
+        event.stopPropagation();
+        if (curIndex > 0) {{
+            curIndex -= 1;
+            showImage();
+        }}
+    }}
+
+    function nextImage(event) {{
+        event.stopPropagation();
+        const list = GALLERIES[curSection];
+        if (curIndex < list.length - 1) {{
+            curIndex += 1;
+            showImage();
+        }}
+    }}
+
     document.addEventListener('keydown', function (e) {{
+        const lb = document.getElementById('lightbox');
+        if (!lb.classList.contains('open')) return;
         if (e.key === 'Escape') {{
             closeLightbox();
+        }} else if (e.key === 'ArrowLeft') {{
+            prevImage(e);
+        }} else if (e.key === 'ArrowRight') {{
+            nextImage(e);
         }}
     }});
 </script>
@@ -299,7 +372,7 @@ SECTION_TEMPLATE = """<section class="folder-section">
 """
 
 ITEM_TEMPLATE = """    <figure style="margin:0;">
-        <a class="thumb-link" href="{original_href}" onclick="openLightbox('{js_href}', '{js_alt}'); return false;">
+        <a class="thumb-link" href="{original_href}" onclick="openLightbox({section_idx}, {item_idx}); return false;">
             <img src="{thumb_href}" alt="{alt}" loading="lazy">
         </a>
         <figcaption class="caption">{alt}</figcaption>
@@ -307,21 +380,27 @@ ITEM_TEMPLATE = """    <figure style="margin:0;">
 """
 
 
-def js_escape(text: str) -> str:
-    return text.replace("\\", "\\\\").replace("'", "\\'")
-
-
-def process_folder(folder: Path, output_dir: Path):
+def process_folder(folder: Path, dest_dir: Path):
     """
-    Generate thumbnails for every image in `folder` and return a list of
-    dicts describing each image, with href paths made relative to
-    `output_dir` (where the final HTML file will live).
+    Copy every image in `folder` into `dest_dir`, generate a thumbnail for
+    each (stored under dest_dir/THUMB_DIR_NAME), and return a list of dicts
+    describing each image with hrefs relative to the OUTPUT folder (i.e.
+    relative to where index.html lives).
     """
-    thumb_dir = folder / THUMB_DIR_NAME
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    thumb_dir = dest_dir / THUMB_DIR_NAME
+
     images = find_images(folder)
 
     images_info = []
     for img_path in images:
+        dest_img_path = dest_dir / img_path.name
+        try:
+            shutil.copy2(img_path, dest_img_path)
+        except Exception as e:
+            print(f"Skipping '{img_path.name}' in '{folder}': could not copy ({e})")
+            continue
+
         thumb_name = img_path.stem + "_thumb.jpg"
         thumb_path = thumb_dir / thumb_name
         try:
@@ -333,16 +412,27 @@ def process_folder(folder: Path, output_dir: Path):
         images_info.append(
             {
                 "name": img_path.name,
-                "original_href": os.path.relpath(img_path, output_dir),
-                "thumb_href": os.path.relpath(thumb_path, output_dir),
+                "original_href": os.path.relpath(dest_img_path, dest_dir.parent),
+                "thumb_href": os.path.relpath(thumb_path, dest_dir.parent),
             }
         )
-        print(f"Thumbnail created: {thumb_path}")
+        print(f"Copied original + thumbnail: {img_path.name}")
 
     return images_info
 
 
-def build_section(folder: Path, images_info):
+def unique_subfolder_name(base_name: str, used_names: set) -> str:
+    """Return `base_name`, or `base_name_2`, `base_name_3`, ... if taken."""
+    name = base_name
+    counter = 2
+    while name in used_names:
+        name = f"{base_name}_{counter}"
+        counter += 1
+    used_names.add(name)
+    return name
+
+
+def build_section(folder: Path, images_info, section_idx: int):
     import html
 
     if images_info:
@@ -351,10 +441,10 @@ def build_section(folder: Path, images_info):
                 original_href=html.escape(info["original_href"], quote=True),
                 thumb_href=html.escape(info["thumb_href"], quote=True),
                 alt=html.escape(info["name"], quote=True),
-                js_href=js_escape(info["original_href"]),
-                js_alt=js_escape(info["name"]),
+                section_idx=section_idx,
+                item_idx=item_idx,
             )
-            for info in images_info
+            for item_idx, info in enumerate(images_info)
         )
         content = f'<div class="gallery">\n{items}</div>'
     else:
@@ -368,14 +458,18 @@ def main():
         print("FOLDERS is empty. Edit the FOLDERS list at the top of this script.")
         sys.exit(1)
 
-    output_path = Path(OUTPUT_FILE).expanduser().resolve()
-    output_dir = output_path.parent
+    import json
+
+    output_dir = Path(OUTPUT).expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "index.html"
 
     sections_html = []
+    galleries_data = []  # list of lists of {"src":..., "alt":...} -> one list per folder/section
     total_count = 0
+    used_names = set()
 
-    for folder_str in FOLDERS:
+    for section_idx, folder_str in enumerate(FOLDERS):
         folder = Path(folder_str).expanduser().resolve()
         if not folder.is_dir():
             print(f"Warning: '{folder}' is not a valid directory. Skipping.")
@@ -385,17 +479,30 @@ def main():
                     content='<p class="empty">Folder not found.</p>',
                 )
             )
+            galleries_data.append([])
             continue
 
-        images_info = process_folder(folder, output_dir)
+        subfolder_name = unique_subfolder_name(folder.name, used_names)
+        dest_dir = output_dir / subfolder_name
+
+        images_info = process_folder(folder, dest_dir)
         total_count += len(images_info)
-        sections_html.append(build_section(folder, images_info))
+        sections_html.append(build_section(folder, images_info, section_idx))
+        galleries_data.append(
+            [{"src": info["original_href"], "alt": info["name"]} for info in images_info]
+        )
+
+    # Embed the per-section image lists as JSON for the lightbox's prev/next
+    # navigation. Escape "</" so a filename can never prematurely close the
+    # surrounding <script> tag.
+    galleries_json = json.dumps(galleries_data).replace("</", "<\\/")
 
     page = PAGE_TEMPLATE.format(
         title="Image Gallery",
         sections="\n".join(sections_html),
         folder_count=len(FOLDERS),
         total_count=total_count,
+        galleries_json=galleries_json,
     )
 
     output_path.write_text(page, encoding="utf-8")
