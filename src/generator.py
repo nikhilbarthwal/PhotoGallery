@@ -21,13 +21,7 @@ import os
 import shutil
 import sys
 from pathlib import Path
-
-try:
-    from PIL import Image, ImageOps
-except ImportError:
-    print("This script requires Pillow. Install it with:")
-    print("    pip install Pillow --break-system-packages")
-    sys.exit(1)
+from PIL import Image, ImageOps
 
 # ---------------------------------------------------------------------------
 # CONFIGURATION -- edit these to fit your setup
