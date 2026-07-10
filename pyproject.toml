@@ -12,8 +12,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
- "pyright[nodejs]>=1.1.411",
- "types-pillow>=10.2.0.20240822",
+    "pyright>=1.1.411",
+    "types-requests>=2.33.0.20260518",
 ]
 
 [tool.pyright]
