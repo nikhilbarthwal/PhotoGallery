@@ -1,13 +1,11 @@
-
-page: str = """
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
 <head>
-    <title>{title}</title>
+    <title>{{ title }}</title>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1,
-          user-scalable=no" name="viewport" />
-    <link href="css/main.css" rel="stylesheet" />
+    <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
+    <link href="css/main.css" rel="stylesheet"/>
+{% raw %}
 <style>
     :root {{
         --thumb-w: 300px;
@@ -27,16 +25,6 @@ page: str = """
 
     section.folder-section:first-of-type {{
         margin-top: 30px;
-    }}
-
-    h2.folder-heading {{
-        font-weight: 400;
-        font-size: 1.4rem;
-        text-align: center;
-        color: #222;
-        border-bottom: 2px solid #eee;
-        padding-bottom: 12px;
-        margin-bottom: 26px;
     }}
 
     .gallery {{
@@ -190,20 +178,24 @@ page: str = """
         to {{ opacity: 1; }}
     }}
 </style>
+{% endraw %}
 </head>
 <body class="is-preload">
 <div id="wrapper"><!-- Wrapper -->
     <div id="main"><!-- Main -->
         <div class="inner">
+
             <!-- Header -->
-            <header id="header">
-                <a class="logo" href="index.html"><strong>{title}</strong></a>
-            </header>
-            {sections}
+            <header id="header"><a class="logo" href="index.html"><strong>{{ title }}</strong></a></header>
+
+{{ sections }}
+
         </div><!-- inner -->
-    </div><!-- main -->
+    </div>
+    <!-- Sidebar -->
     <div id="sidebar">
         <div class="inner">
+
             <!-- Menu -->
             <nav id="menu">
                 <header class="major"><h2>Menu</h2></header>
@@ -234,35 +226,32 @@ page: str = """
                 <p>If you have any comments or suggestions, please feel free to email me.
                 Feedback is always welcome!</p>
                 <ul class="contact">
-                    <li class="icon solid fa-envelope">
-                        <a href="mailto:{email}">{email}</a>
-                    </li>
+                    <li class="icon solid fa-envelope"><a href="mailto:nikhilbarthwal@hotmail.com">nikhilbarthwal@hotmail.com</a></li>
                 </ul>
             </section>
-            <footer id="footer">
-                <p class="copyright">Last update: {timestamp}</p>
-            </footer>
+            <!-- Footer --><footer id="footer"><p class="copyright">Last update: Sunday, 25<sup>th</sup> October 2020</p></footer>
         </div><!-- inner -->
-    </div><!-- sidebar -->
+    </div><!-- Main -->
 </div><!-- Wrapper -->
+
+
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-    <span class="lightbox-arrow left" id="lightbox-prev"
-          onclick="prevImage(event)">&#10094;</span>
+    <span class="lightbox-arrow left" id="lightbox-prev" onclick="prevImage(event)">&#10094;</span>
     <div class="lightbox-content" onclick="event.stopPropagation()">
         <img id="lightbox-img" src="" alt="">
         <div class="lightbox-caption" id="lightbox-caption"></div>
     </div>
-    <span class="lightbox-arrow right" id="lightbox-next"
-          onclick="nextImage(event)">&#10095;</span>
+    <span class="lightbox-arrow right" id="lightbox-next" onclick="nextImage(event)">&#10095;</span>
 </div>
 
 <script>
-    const GALLERIES = {galleries_json};
+    const GALLERIES = {{ galleries_json }} ;
     let curSection = -1;
     let curIndex = -1;
 
+    {% raw %}
     function showImage() {{
         const list = GALLERIES[curSection];
         const item = list[curIndex];
@@ -321,6 +310,7 @@ page: str = """
             nextImage(e);
         }}
     }});
+    {% endraw %}
 </script>
 
 <!-- Scripts -->
@@ -332,22 +322,4 @@ page: str = """
 
 </body>
 </html>
-"""
 
-section: str = """
-    <section class="folder-section">
-        <h2 class="folder-heading">{folder_name}</h2>
-        {content}
-    </section>
-"""
-
-item: str = """
-    <figure style="margin:0;">
-        <a class="thumb-link" href="{original_href}"
-           onclick="openLightbox({section_idx}, {item_idx});
-           return false;">
-            <img src="{thumb_href}" alt="{alt}" loading="lazy">
-        </a>
-        <figcaption class="caption">{alt}</figcaption>
-    </figure>
-"""

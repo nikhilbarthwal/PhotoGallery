@@ -220,10 +220,11 @@ def main():
     galleries_json = json.dumps(galleries_data).replace("</", "<\\/")
 
     page = template.page.format(
-        title="Image Gallery",
-        sections="\n".join(sections_html),
+        title = "Image Gallery",
+        sections = "\n".join(sections_html),
         timestamp = str(total_count),
-        galleries_json=galleries_json,
+        galleries_json = galleries_json,
+        email = "nikhilbarthwal@hotmail.com"
     )
     output_path.write_text(page, encoding="utf-8")
     print(f"\nGallery created: {output_path}")
