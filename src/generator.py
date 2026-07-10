@@ -2,7 +2,7 @@
 """
 generate_gallery.py
 
-Scans multiple folders for images, copies the originals and generates
+Scans multiple config.folders for images, copies the originals and generates
 300x200 thumbnails (center-cropped to a 3:2 aspect ratio, clipping
 top/bottom or left/right as needed) into a single OUTPUT folder, and
 builds an index.html page (inside that OUTPUT folder) that displays
@@ -12,7 +12,6 @@ expands the original image in place (lightbox) with left/right arrows
 to move to the previous/next image (hidden at the start/end of that
 folder's images); clicking again returns to the gallery.
 
->>> Edit the FOLDERS list and OUTPUT folder name below <<<
 
 Requires: Pillow  (pip install Pillow --break-system-packages)
 """
@@ -22,13 +21,19 @@ import shutil
 import sys
 from pathlib import Path
 from PIL import Image, ImageOps
+import template
+import config
+from typing import List, Dict
+import json
 
 
-def find_images(folder: Path):
+ratio = config.thumbs_width / config.thumbs_height
+
+def find_images(folder: Path) -> List[Path]:
     """Return a sorted list of image files directly inside `folder`."""
-    images = []
+    images: List[Path] = []
     for entry in sorted(folder.iterdir()):
-        if entry.is_file() and entry.suffix.lower() in IMAGE_EXTENSIONS:
+        if entry.is_file() and entry.suffix.lower() in config.extensions:
             images.append(entry)
     return images
 
@@ -48,48 +53,49 @@ def make_thumbnail(src_path: Path, dst_path: Path):
         w, h = im.size
         src_ratio = w / h
 
-        if src_ratio > TARGET_RATIO:
+        if src_ratio > ratio:
             # Image is wider than 3:2 -> clip left/right, keep full height.
-            new_w = int(round(h * TARGET_RATIO))
+            new_w = int(round(h * ratio))
             offset = (w - new_w) // 2
             box = (offset, 0, offset + new_w, h)
         else:
             # Image is taller than (or equal to) 3:2 -> clip top/bottom.
-            new_h = int(round(w / TARGET_RATIO))
+            new_h = int(round(w / ratio))
             offset = (h - new_h) // 2
             box = (0, offset, w, offset + new_h)
 
         cropped = im.crop(box)
-        thumb = cropped.resize((THUMB_W, THUMB_H), Image.LANCZOS)
+        thumb = cropped.resize((config.thumbs_width, config.thumbs_height),
+                               Image.LANCZOS)
 
         dst_path.parent.mkdir(parents=True, exist_ok=True)
         # Always save thumbnails as JPEG for consistent small file size.
         thumb.save(dst_path, "JPEG", quality=85)
 
 
-def process_folder(folder: Path, dest_dir: Path):
+def process_folder(folder: Path, dest_dir: Path) -> List[Dict[str, str]]:
     """
-    Copy every image in `folder` into `dest_dir`, generate a thumbnail for
-    each (stored under dest_dir/THUMB_DIR_NAME), and return a list of dicts
-    describing each image with hrefs relative to the OUTPUT folder (i.e.
-    relative to where index.html lives).
+    Copy every image in `folder` into `dest_dir`, generate a thumbnail for each (
+    stored under dest_dir/thumb_dir), and return a list of dicts describing each
+    image with hrefs relative to the OUTPUT folder (i.e. relative to where
+    index.html lives).
     """
     dest_dir.mkdir(parents=True, exist_ok=True)
-    thumb_dir = dest_dir / THUMB_DIR_NAME
+    thumb_dir = dest_dir / config.thumbs_dir
 
-    images = find_images(folder)
+    images: List[Path] = find_images(folder)
 
-    images_info = []
+    images_info: List[Dict[str, str]] = []
     for img_path in images:
-        dest_img_path = dest_dir / img_path.name
+        dest_img_path: Path = dest_dir / img_path.name
         try:
             shutil.copy2(img_path, dest_img_path)
         except Exception as e:
             print(f"Skipping '{img_path.name}' in '{folder}': could not copy ({e})")
             continue
 
-        thumb_name = img_path.stem + "_thumb.jpg"
-        thumb_path = thumb_dir / thumb_name
+        thumb_name: str = img_path.stem + "_thumb.jpg"
+        thumb_path: Path = thumb_dir / thumb_name
         try:
             make_thumbnail(img_path, thumb_path)
         except Exception as e:
@@ -108,23 +114,23 @@ def process_folder(folder: Path, dest_dir: Path):
     return images_info
 
 
-def unique_subfolder_name(base_name: str, used_names: set) -> str:
+def unique_subfolder_name(base_name: str, used_names: set[str]) -> str:
     """Return `base_name`, or `base_name_2`, `base_name_3`, ... if taken."""
-    name = base_name
-    counter = 2
+    name: str = base_name
+    counter: int = 2
     while name in used_names:
-        name = f"{base_name}_{counter}"
+        name: str = f"{base_name}_{counter}"
         counter += 1
     used_names.add(name)
     return name
 
 
-def build_section(folder: Path, images_info, section_idx: int):
+def build_section(folder: Path, images_info: List[Dict[str, str]], section_idx: int) -> str:
     import html
 
     if images_info:
         items = "\n".join(
-            ITEM_TEMPLATE.format(
+            template.item.format(
                 original_href=html.escape(info["original_href"], quote=True),
                 thumb_href=html.escape(info["thumb_href"], quote=True),
                 alt=html.escape(info["name"], quote=True),
@@ -137,31 +143,31 @@ def build_section(folder: Path, images_info, section_idx: int):
     else:
         content = '<p class="empty">No images found in this folder.</p>'
 
-    return SECTION_TEMPLATE.format(folder_name=html.escape(folder.name), content=content)
+    return template.section.format(folder_name=html.escape(folder.name),
+                                   content=content)
 
 
 def main():
-    if not FOLDERS:
-        print("FOLDERS is empty. Edit the FOLDERS list at the top of this script.")
+    if not config.folders:
+        print("config.folders is empty. Edit the config.folders list.")
         sys.exit(1)
 
-    import json
-
-    output_dir = Path(OUTPUT).expanduser().resolve()
+    output_dir = Path(config.output).expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "index.html"
 
-    sections_html = []
-    galleries_data = []  # list of lists of {"src":..., "alt":...} -> one list per folder/section
-    total_count = 0
-    used_names = set()
+    # list of lists of {"src":..., "alt":...} -> one list per folder/section
+    galleries_data: List[List[Dict[str, str]]] = []
+    sections_html: List[str] = []
+    total_count: int = 0
+    used_names: set[str] = set()
 
-    for section_idx, folder_str in enumerate(FOLDERS):
+    for section_idx, folder_str in enumerate(config.folders):
         folder = Path(folder_str).expanduser().resolve()
         if not folder.is_dir():
             print(f"Warning: '{folder}' is not a valid directory. Skipping.")
             sections_html.append(
-                SECTION_TEMPLATE.format(
+                template.section.format(
                     folder_name=folder.name,
                     content='<p class="empty">Folder not found.</p>',
                 )
@@ -169,14 +175,15 @@ def main():
             galleries_data.append([])
             continue
 
-        subfolder_name = unique_subfolder_name(folder.name, used_names)
-        dest_dir = output_dir / subfolder_name
+        subfolder_name: str = unique_subfolder_name(folder.name, used_names)
+        dest_dir: Path = output_dir / subfolder_name
 
-        images_info = process_folder(folder, dest_dir)
+        images_info: List[Dict[str, str]] = process_folder(folder, dest_dir)
         total_count += len(images_info)
         sections_html.append(build_section(folder, images_info, section_idx))
         galleries_data.append(
-            [{"src": info["original_href"], "alt": info["name"]} for info in images_info]
+            [{"src": info["original_href"], "alt": info["name"]}
+             for info in images_info]
         )
 
     # Embed the per-section image lists as JSON for the lightbox's prev/next
@@ -184,17 +191,16 @@ def main():
     # surrounding <script> tag.
     galleries_json = json.dumps(galleries_data).replace("</", "<\\/")
 
-    page = PAGE_TEMPLATE.format(
+    page = template.page.format(
         title="Image Gallery",
         sections="\n".join(sections_html),
-        folder_count=len(FOLDERS),
+        folder_count=len(config.folders),
         total_count=total_count,
         galleries_json=galleries_json,
     )
 
     output_path.write_text(page, encoding="utf-8")
     print(f"\nGallery created: {output_path}")
-    print(f"Open it in a browser to view {total_count} image(s) across {len(FOLDERS)} folder(s).")
 
 
 if __name__ == "__main__":

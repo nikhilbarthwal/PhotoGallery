@@ -1,6 +1,5 @@
 
-
-PAGE_TEMPLATE = """<!DOCTYPE html>
+page: str = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -292,13 +291,13 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 
-SECTION_TEMPLATE = """<section class="folder-section">
+section: str = """<section class="folder-section">
     <h2 class="folder-heading">{folder_name}</h2>
     {content}
 </section>
 """
 
-ITEM_TEMPLATE = """    <figure style="margin:0;">
+item: str = """    <figure style="margin:0;">
         <a class="thumb-link" href="{original_href}" onclick="openLightbox({section_idx}, {item_idx}); return false;">
             <img src="{thumb_href}" alt="{alt}" loading="lazy">
         </a>

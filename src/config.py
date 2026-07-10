@@ -1,6 +1,13 @@
-FOLDERS = ["Berlin1/", "Berlin2/", "Berlin3/", "Berlin4/", "Berlin5/"]
-OUTPUT = "/home/nikhil/Workspace/Homepage/photos/"
-THUMB_DIR_NAME = "thumbnails"
-THUMB_W, THUMB_H = 300, 200
-TARGET_RATIO = THUMB_W / THUMB_H  # 3:2 = 1.5
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff", ".tif"}
+from typing import List
+
+folders: List[str] = [
+    "/home/nikhil/Dropbox/Nikhil/Pictures/Europe/Germany/Berlin1/",
+    "/home/nikhil/Dropbox/Nikhil/Pictures/Europe/Germany/Berlin2/",
+    "/home/nikhil/Dropbox/Nikhil/Pictures/Europe/Germany/Berlin3/"
+]
+
+output: str = "./"
+thumbs_dir: str = "thumbnails"
+thumbs_width: int = 300
+thumbs_height: int = 200
+extensions: List[str] = [".jpg"]
