@@ -29,6 +29,34 @@ import json
 
 ratio = config.thumbs_width / config.thumbs_height
 
+
+import os
+import shutil
+
+
+def copy_files_recursively(source, destination):
+    """
+    Recursively copies all files and subfolders from source to destination.
+
+    Args:
+        source (str): Path to the source directory.
+        destination (str): Path to the destination directory.
+    """
+    # Create the destination directory if it doesn't exist
+    os.makedirs(destination, exist_ok=True)
+
+    for item in os.listdir(source):
+        src_path = os.path.join(source, item)
+        dst_path = os.path.join(destination, item)
+
+        if os.path.isdir(src_path):
+            # Recurse into subdirectories
+            copy_files_recursively(src_path, dst_path)
+        else:
+            # Copy file, preserving metadata (timestamps, permissions)
+            shutil.copy2(src_path, dst_path)
+
+
 def find_images(folder: Path) -> List[Path]:
     """Return a sorted list of image files directly inside `folder`."""
     images: List[Path] = []
@@ -194,11 +222,9 @@ def main():
     page = template.page.format(
         title="Image Gallery",
         sections="\n".join(sections_html),
-        folder_count=len(config.folders),
-        total_count=total_count,
+        timestamp = str(total_count),
         galleries_json=galleries_json,
     )
-
     output_path.write_text(page, encoding="utf-8")
     print(f"\nGallery created: {output_path}")
 
